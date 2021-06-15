@@ -110,20 +110,15 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
-
-    // array = [1, 2, 2, 3, 4, 4];
-    // iterator = function(num) { return num === 1; }
-    // transformed array = [1, 0, 0, 0, 0, 0]
-    // unique cases of transformed array = [1, 0]
-    // which corresponds to array values [1, 2]
-
     var collector = [];
-    // create transformed collector to check
-
+    var transformedCollector = [];
     for (var i = 0; i < array.length; i++) {
-      //if (iterator !== undefined) {
-      //
-      //}
+      if (iterator !== undefined) {
+        if (transformedCollector.indexOf(iterator(array[i])) === -1) {
+          transformedCollector.push(iterator(array[i]));
+          collector.push(array[i]);
+        }
+      }
       if (iterator === undefined && collector.indexOf(array[i]) === -1) {
         collector.push(array[i]);
       }
