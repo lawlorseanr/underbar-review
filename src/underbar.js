@@ -55,6 +55,17 @@
   // Note: _.each does not have a return value, but rather simply runs the
   // iterator function over each item in the input collection.
   _.each = function(collection, iterator) {
+    if (Array.isArray(collection)) {
+      for (var i = 0; i < collection.length; i++) {
+
+        iterator(collection[i], i, collection);
+      }
+    }
+    if (typeof collection === 'object' && !Array.isArray(collection)) {
+      for (var key in collection) {
+        iterator(collection[key], key, collection);
+      }
+    }
   };
 
   // Returns the index at which value can be found in the array, or -1 if value
@@ -64,7 +75,6 @@
     // implemented for you. Instead of using a standard `for` loop, though,
     // it uses the iteration helper `each`, which you will need to write.
     var result = -1;
-
     _.each(array, function(item, index) {
       if (item === target && result === -1) {
         result = index;
@@ -76,16 +86,49 @@
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
+    var collector = [];
+    for (var i = 0; i < collection.length; i++) {
+      if (test(collection[i])) {
+        collector.push(collection[i]);
+      }
+    }
+    return collector;
   };
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
+    var collector = [];
+    for (var i = 0; i < collection.length; i++) {
+      if (!test(collection[i])) {
+        collector.push(collection[i]);
+      }
+    }
+    return collector;
   };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
+
+    // array = [1, 2, 2, 3, 4, 4];
+    // iterator = function(num) { return num === 1; }
+    // transformed array = [1, 0, 0, 0, 0, 0]
+    // unique cases of transformed array = [1, 0]
+    // which corresponds to array values [1, 2]
+
+    var collector = [];
+    // create transformed collector to check
+
+    for (var i = 0; i < array.length; i++) {
+      //if (iterator !== undefined) {
+      //
+      //}
+      if (iterator === undefined && collector.indexOf(array[i]) === -1) {
+        collector.push(array[i]);
+      }
+    }
+    return collector;
   };
 
 
