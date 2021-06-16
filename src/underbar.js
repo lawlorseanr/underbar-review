@@ -209,7 +209,15 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
-
+    if (iterator === undefined) {
+      iterator = _.identity;
+    }
+    return _.reduce(collection, function(allTrue, item) {
+      if (allTrue && iterator(item)) {
+        return true;
+      }
+      return false;
+    }, true);
     var wasFound = true;
     _.each(collection, function(item) {
       wasFound = wasFound && iterator(item);
@@ -221,6 +229,25 @@
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    if (collection.length === 0 || collection === undefined) {
+      return false;
+    }
+    if (iterator === undefined) {
+      var isTrue = true;
+      for (var i = 0; i < collection.length; i++) {
+        var currentElement = collection[i];
+        if (currentElement) {
+          isTrue = true;
+          break;
+        } else {
+          isTrue = false;
+        }
+      }
+      return isTrue;
+    }
+    return !(_.every(collection, function(item) {
+      return !iterator(item);
+    }));
   };
 
 
@@ -243,6 +270,13 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    var collection = Array.prototype.slice.call(arguments);
+    return _.reduce(collection, function(obj, item) {
+      for (var key in item) {
+        obj[key] = item[key];
+      }
+      return obj;
+    });
   };
 
   // Like extend, but doesn't ever overwrite a key that already
@@ -291,6 +325,17 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var previousInputs = {};
+    return function () {
+      var stringyArguments = JSON.stringify(arguments);
+      var result;
+      if (previousInputs[stringyArguments] === undefined) {
+        result = func.apply(this, arguments);
+        previousInputs[stringyArguments] = result;
+        return result;
+      }
+      return previousInputs[stringyArguments];
+    };
   };
 
   // Delays a function for the given number of milliseconds, and then calls

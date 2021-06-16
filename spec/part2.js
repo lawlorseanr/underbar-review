@@ -149,7 +149,8 @@
       it('should fail for a set containing no matching values', function() {
         // Replace this line with an `expect` statement that tests
         // the behavior described by the `it` string
-        throw new Error('This test is missing.');
+        expect(_.some([5, 'yes', 22, false], _.identity)).to.be.true;
+        // throw new Error('This test is missing.');
       });
 
       it('should pass for a collection containing one matching value', function() {
@@ -169,46 +170,38 @@
     });
 
     describe('extend', function() {
-
       it('returns the first argument', function() {
         var destination = {};
         var source = {};
         var extended = _.extend(destination, source);
-
         expect(extended).to.equal(destination);
       });
-
       it('should extend an object with the attributes of another', function() {
         var destination = {};
         var source = { a: 'b' };
         var extended = _.extend(destination, source);
-
         expect(extended.a).to.equal('b');
       });
-
       it('should override properties found on the destination', function() {
         // Replace this line with an `expect` statement that tests
         // the behavior described by the `it` string
-        throw new Error('This test is missing.');
+        var destination = {'a': 9};
+        var source = {'a': 10};
+        var extended = _.extend(destination, source);
+        expect(extended.a).to.equal(10);
       });
-
       it('should not override properties not found in the source', function() {
         var destination = { x: 'x' };
         var source = { a: 'b' };
         var extended = _.extend(destination, source);
-
         expect(extended.x).to.equal('x');
       });
-
       it('should extend from multiple source objects', function() {
         var extended = _.extend({ x: 1 }, { a: 2 }, { b: 3 });
-
         expect(extended).to.eql({ x: 1, a: 2, b: 3 });
       });
-
       it('in the case of a conflict, it should use the last property\'s values when extending from multiple source objects', function() {
         var extended = _.extend({ x: 'x' }, { a: 'a', x: 2 }, { a: 1 });
-
         expect(extended).to.eql({ x: 2, a: 1 });
       });
     });
@@ -380,56 +373,45 @@
 
     describe('memoize', function() {
       var add, memoAdd;
-
       beforeEach(function() {
         add = function(a, b) {
           return a + b;
         };
-
         memoAdd = _.memoize(add);
       });
-
-
       it('should produce the same result as the non-memoized version', function() {
         expect(add(1, 2)).to.equal(3);
         expect(memoAdd(1, 2)).to.equal(3);
       });
-
       it('should give different results for different arguments', function() {
         expect(memoAdd(1, 2)).to.equal(3);
         expect(memoAdd(3, 4)).to.equal(7);
         expect(memoAdd(1, 3)).to.equal(4);
       });
-
       it('should not run the memoized function twice when given a primitive type as an argument', function() {
         // Here, we wrap a dummy function in a spy. A spy is a wrapper function (much like _.memoize
         // or _.once) that keeps track of interesting information about the function it's spying on;
         // e.g. whether or not the function has been called.
         var spy = sinon.spy(function() { return 'Dummy output'; });
         var memoSpy = _.memoize(spy);
-
         memoSpy(10);
         expect(spy).to.have.been.calledOnce;
         memoSpy(10);
         expect(spy).to.have.been.calledOnce;
       });
-
       it('should not run the memoized function twice when given a reference type as an argument', function() {
         // Be careful how you are checking if a set of arguments has been passed in already
         var spy = sinon.spy(function() { return 'Dummy output'; });
         var memoSpy = _.memoize(spy);
-
         memoSpy([1, 2, 3]);
         expect(spy).to.have.been.calledOnce;
         memoSpy([1, 2, 3]);
         expect(spy).to.have.been.calledOnce;
       });
-
       it('should run the memoized function twice when given an array and then given a list of arguments', function() {
         // Be careful how you are checking if a set of arguments has been passed in already
         var spy = sinon.spy(function() { return 'Dummy output'; });
         var memoSpy = _.memoize(spy);
-
         memoSpy([1, 2, 3]);
         expect(spy).to.have.been.calledOnce;
         memoSpy(1, 2, 3);
